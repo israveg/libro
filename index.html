@@ -13,60 +13,88 @@
     box-sizing: border-box;
 }
 
+/* SISTEMA RESPONSIVO FLUIDO (Variables de control) */
+:root {
+    --book-width: 520px;
+    --book-height: 640px;
+    --padding-page: 50px 40px;
+    --h1-size: 34px;
+    --h2-size: 24px;
+    --p-size: 16px;
+}
+
+/* Adaptación para pantallas de laptops medianas / tablets */
+@media (max-width: 1024px) {
+    :root {
+        --book-width: 460px;
+        --book-height: 580px;
+        --padding-page: 40px 30px;
+        --h1-size: 30px;
+        --h2-size: 22px;
+    }
+}
+
+/* Adaptación estricta para celulares */
+@media (max-width: 600px) {
+    :root {
+        --book-width: 90vw;
+        --book-height: 78vh; /* Usa el alto de la pantalla para evitar desbordes */
+        --padding-page: 35px 20px;
+        --h1-size: 26px;
+        --h2-size: 19px;
+        --p-size: 14px;
+    }
+}
+
 body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Fondo oscuro dramático para hacer resaltar la invitación */
     background: radial-gradient(circle at center, #2c2214 0%, #0f0f0f 100%);
     font-family: 'Georgia', serif;
-    overflow-x: hidden;
+    overflow: hidden;
     padding: 20px;
 }
 
-/* CONTENEDOR LIBRO (Con efecto de tapa dura oculta detrás) */
+/* CONTENEDOR LIBRO */
 .book {
-    width: 550px; /* Optimización de proporción áurea para formato libro vertical premium */
-    max-width: 95vw;
-    height: 650px;
-    max-height: 85vh;
+    width: var(--book-width);
+    height: var(--book-height);
     position: relative;
-    perspective: 2500px; /* Mayor perspectiva para un giro 3D más realista */
+    perspective: 3000px; /* Mayor profundidad para el pandeo 3D */
     border-radius: 8px;
-    /* Sombra proyectada sobre la mesa simulada */
     box-shadow: 
         0 30px 70px rgba(0, 0, 0, 0.8),
         inset 0 0 100px rgba(0, 0, 0, 0.4);
 }
 
-/* PAGINAS ESTILO PAPEL MARFIL PREMIUM */
+/* PAGINAS ESTILO PAPEL MARFIL */
 .page {
     position: absolute;
     width: 100%;
     height: 100%;
-    /* Simulación de textura de papel antiguo/marfil mediante sutiles gradientes */
     background: linear-gradient(150deg, #fdfbf7 0%, #f4edd4 100%);
-    border-radius: 4px 12px 12px 4px; /* Bordes más redondeados en la apertura */
-    padding: 50px 40px;
+    border-radius: 4px 12px 12px 4px;
+    padding: var(--padding-page);
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     
-    /* Efecto de grosor de hoja y sombras superpuestas */
     box-shadow: 
         inset 3px 0 10px rgba(0,0,0,0.05),
         -5px 0 15px rgba(0, 0, 0, 0.1),
         0 4px 10px rgba(0, 0, 0, 0.15);
 
     transform-origin: left center;
-    transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1), z-index 0s linear 0.4s;
+    /* Transición fluida para el volteo */
+    transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
     backface-visibility: hidden;
     overflow: hidden;
 }
 
-/* Detalle elegante de borde interno tipo paspartú */
+/* Detalle de marco interno elegante */
 .page::before {
     content: '';
     position: absolute;
@@ -79,7 +107,7 @@ body {
     pointer-events: none;
 }
 
-/* Simulación de la sombra del lomo central en el borde izquierdo */
+/* Sombras en el lomo del libro */
 .page::after {
     content: '';
     position: absolute;
@@ -98,91 +126,97 @@ body {
 .page:nth-child(4) { z-index: 3; }
 .page:nth-child(5) { z-index: 2; }
 
-/* EFECTO PASAR HOJA FISICA EN 3D */
+/* 2. EFECTO PANDEO TRIDIMENSIONAL DE LA HOJA (Flexión realista) */
 .page.flipped {
-    transform: rotateY(-180deg) scaleX(0.98); /* Ligera compresión para emular curvatura */
+    /* rotateY realiza el giro, skewY(2deg) simula la caída/pandeo del papel al doblarse, scaleX reduce sutilmente para dar volumen */
+    transform: rotateY(-180deg) skewY(2deg) scaleX(0.98);
     box-shadow: 
         inset -10px 0 20px rgba(0,0,0,0.2),
-        10px 10px 20px rgba(0, 0, 0, 0.4);
+        10px 10px 25px rgba(0, 0, 0, 0.4);
 }
 
-/* CONTENEDOR INTERNO DE CONTENIDO (Asegura centrado y fluidez) */
+/* Asegurar el ajuste interno del contenido */
 .page > div {
     width: 100%;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1;
+    overflow-y: auto; /* Evita pérdidas de texto en pantallas extremadamente pequeñas */
 }
 
-/* TEXTOS ELEGANTES */
-h1 {
-    font-size: 34px;
+/* 1. ANIMACIÓN DE GLOW Y DESTELLO DORADO */
+h1, h2, .nombre {
     font-weight: 400;
-    color: #4a361e;
+    line-height: 1.4;
+    /* Efecto gradiente metálico imitación oro */
+    background: linear-gradient(135deg, #9a7432 0%, #f0d79e 25%, #c5a059 50%, #f0d79e 75%, #9a7432 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 6s linear infinite;
+    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.05);
+}
+
+h1 {
+    font-size: var(--h1-size);
     letter-spacing: 1px;
     margin-bottom: 25px;
-    line-height: 1.3;
-    /* Adorno sutil inferior estilo editorial */
-    border-bottom: 1px solid #c5a059;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
     padding-bottom: 15px;
-    width: 80%;
+    width: 85%;
 }
 
 h2 {
-    font-size: 24px;
-    font-weight: 400;
-    color: #5c4528;
+    font-size: var(--h2-size);
     margin-bottom: 25px;
-    line-height: 1.4;
 }
 
 h3 {
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #c5a059; /* Dorado Suave */
-    margin-bottom: 8px;
+    color: #c5a059;
+    margin-bottom: 6px;
 }
 
 p {
-    font-size: 16px;
-    line-height: 1.8;
+    font-size: var(--p-size);
+    line-height: 1.7;
     color: #444444;
     margin-bottom: 20px;
-    font-weight: 300;
 }
 
 .dedicatoria {
     font-style: italic;
     color: #7a6348;
-    font-size: 17px;
-    line-height: 1.9;
+    line-height: 1.8;
 }
 
 .final {
-    font-size: 18px;
+    font-size: calc(var(--p-size) + 1px);
     font-style: italic;
     color: #4a361e;
-    line-height: 1.9;
-    margin-bottom: 35px;
+    line-height: 1.8;
+    margin-bottom: 30px;
 }
 
-/* BOTONES PREMIUM (Estilo lacre/alta costura) */
+/* BOTONES PREMIUM */
 button {
-    margin-top: 20px;
+    margin-top: 15px;
     padding: 12px 35px;
     border: 1px solid #c5a059;
-    border-radius: 4px; /* Forma más formal/cuadrada sutil */
+    border-radius: 4px;
     background: #4a361e;
     color: #f4edd4;
     cursor: pointer;
     font-family: 'Georgia', serif;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all 0.4s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -194,58 +228,23 @@ button:hover {
     transform: translateY(-2px);
 }
 
-button:active {
-    transform: translateY(0);
-}
-
-/* DATOS DE INFORMACIÓN */
+/* INFORMACIÓN DE EVENTOS */
 .info {
-    margin: 15px 0;
+    margin: 12px 0;
     width: 100%;
 }
 
-/* NOMBRE FINAL */
 .nombre {
-    font-size: 32px;
-    font-family: 'Georgia', serif;
+    font-size: calc(var(--h2-size) + 6px);
     font-style: italic;
-    color: #4a361e;
     margin-top: 5px;
 }
 
-/* RESPONSIVE FLUIDO (Mantiene la experiencia de libro sin romper la estructura) */
-@media(max-width: 600px) {
-    .book {
-        height: 580px;
-        width: 100%;
-    }
-    
-    .page {
-        padding: 35px 25px;
-    }
-    
-    h1 {
-        font-size: 26px;
-        width: 90%;
-    }
-    
-    h2 {
-        font-size: 20px;
-    }
-    
-    p {
-        font-size: 14px;
-        line-height: 1.6;
-    }
-    
-    .final {
-        font-size: 15px;
-    }
-    
-    button {
-        padding: 10px 25px;
-        font-size: 12px;
-    }
+/* Animación del destello dorado */
+@keyframes goldShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 </style>
 </head>
