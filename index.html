@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una Invitación Especial</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Fondo oscuro dramático para hacer resaltar la invitación */
+    background: radial-gradient(circle at center, #2c2214 0%, #0f0f0f 100%);
+    font-family: 'Georgia', serif;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+/* CONTENEDOR LIBRO (Con efecto de tapa dura oculta detrás) */
+.book {
+    width: 550px; /* Optimización de proporción áurea para formato libro vertical premium */
+    max-width: 95vw;
+    height: 650px;
+    max-height: 85vh;
+    position: relative;
+    perspective: 2500px; /* Mayor perspectiva para un giro 3D más realista */
+    border-radius: 8px;
+    /* Sombra proyectada sobre la mesa simulada */
+    box-shadow: 
+        0 30px 70px rgba(0, 0, 0, 0.8),
+        inset 0 0 100px rgba(0, 0, 0, 0.4);
+}
+
+/* PAGINAS ESTILO PAPEL MARFIL PREMIUM */
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* Simulación de textura de papel antiguo/marfil mediante sutiles gradientes */
+    background: linear-gradient(150deg, #fdfbf7 0%, #f4edd4 100%);
+    border-radius: 4px 12px 12px 4px; /* Bordes más redondeados en la apertura */
+    padding: 50px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    /* Efecto de grosor de hoja y sombras superpuestas */
+    box-shadow: 
+        inset 3px 0 10px rgba(0,0,0,0.05),
+        -5px 0 15px rgba(0, 0, 0, 0.1),
+        0 4px 10px rgba(0, 0, 0, 0.15);
+
+    transform-origin: left center;
+    transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1), z-index 0s linear 0.4s;
+    backface-visibility: hidden;
+    overflow: hidden;
+}
+
+/* Detalle elegante de borde interno tipo paspartú */
+.page::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    border: 1px solid rgba(139, 107, 61, 0.15);
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+/* Simulación de la sombra del lomo central en el borde izquierdo */
+.page::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 25px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+}
+
+/* ORDEN DE PAGINAS INICIAL */
+.page:nth-child(1) { z-index: 6; }
+.page:nth-child(2) { z-index: 5; }
+.page:nth-child(3) { z-index: 4; }
+.page:nth-child(4) { z-index: 3; }
+.page:nth-child(5) { z-index: 2; }
+
+/* EFECTO PASAR HOJA FISICA EN 3D */
+.page.flipped {
+    transform: rotateY(-180deg) scaleX(0.98); /* Ligera compresión para emular curvatura */
+    box-shadow: 
+        inset -10px 0 20px rgba(0,0,0,0.2),
+        10px 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* CONTENEDOR INTERNO DE CONTENIDO (Asegura centrado y fluidez) */
+.page > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+/* TEXTOS ELEGANTES */
+h1 {
+    font-size: 34px;
+    font-weight: 400;
+    color: #4a361e;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    line-height: 1.3;
+    /* Adorno sutil inferior estilo editorial */
+    border-bottom: 1px solid #c5a059;
+    padding-bottom: 15px;
+    width: 80%;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #5c4528;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #c5a059; /* Dorado Suave */
+    margin-bottom: 8px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444444;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.dedicatoria {
+    font-style: italic;
+    color: #7a6348;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.final {
+    font-size: 18px;
+    font-style: italic;
+    color: #4a361e;
+    line-height: 1.9;
+    margin-bottom: 35px;
+}
+
+/* BOTONES PREMIUM (Estilo lacre/alta costura) */
+button {
+    margin-top: 20px;
+    padding: 12px 35px;
+    border: 1px solid #c5a059;
+    border-radius: 4px; /* Forma más formal/cuadrada sutil */
+    background: #4a361e;
+    color: #f4edd4;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background: #c5a059;
+    color: #2c2214;
+    border-color: #2c2214;
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* DATOS DE INFORMACIÓN */
+.info {
+    margin: 15px 0;
+    width: 100%;
+}
+
+/* NOMBRE FINAL */
+.nombre {
+    font-size: 32px;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    color: #4a361e;
+    margin-top: 5px;
+}
+
+/* RESPONSIVE FLUIDO (Mantiene la experiencia de libro sin romper la estructura) */
+@media(max-width: 600px) {
+    .book {
+        height: 580px;
+        width: 100%;
+    }
+    
+    .page {
+        padding: 35px 25px;
+    }
+    
+    h1 {
+        font-size: 26px;
+        width: 90%;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+    
+    p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    .final {
+        font-size: 15px;
+    }
+    
+    button {
+        padding: 10px 25px;
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="book">
+
+<!-- PORTADA -->
+<div class="page">
+<div>
+<h1>Una Invitación Especial</h1>
+<p class="dedicatoria">
+Con mucho cariño, para una persona que ha sido parte importante de mi camino.
+</p>
+<button onclick="nextPage()">Abrir libro</button>
+</div>
+</div>
+
+<!-- PAGINA 1 -->
+<div class="page">
+<div>
+<h2>Hay personas que forman parte de nuestra historia de una manera especial.</h2>
+<p>
+A lo largo de mi vida y de esta etapa universitaria, he tenido la fortuna de contar con personas que, con su cariño, sus consejos y su ejemplo, han dejado una huella importante en quien soy hoy.
+</p>
+<button onclick="nextPage()">Continuar</button>
+</div>
+</div>
+
+<!-- PAGINA 2 -->
+<div class="page">
+<div>
+<p>Por ello, me haría muy feliz que me acompañaras en mi</p>
+<h2>Fotografía de Generación</h2>
+<p>Un momento que simboliza el cierre de una etapa llena de esfuerzo, aprendizaje y crecimiento.</p>
+<button onclick="nextPage()">Continuar</button>
+</div>
+</div>
+
+<!-- PAGINA 3 -->
+<div class="page">
+<div>
+<h2>Detalles del Evento</h2>
+<div class="info">
+<h3>📅 Fecha</h3>
+<p>14 de Julio de 2026</p>
+</div>
+<div class="info">
+<h3>🕒 Hora</h3>
+<p>4:00 pm</p>
+</div>
+<div class="info">
+<h3>📍 Lugar</h3>
+<p>Tecnológico de Estudios Superiores del Estado de México</p>
+</div>
+<button onclick="nextPage()">Continuar</button>
+</div>
+</div>
+
+<!-- PAGINA FINAL -->
+<div class="page">
+<div>
+<p class="final">
+Compartir este instante contigo significaría mucho para mí, porque eres parte de la historia que me ha llevado hasta aquí.
+</p>
+<h3>Con cariño</h3>
+<h2 class="nombre">Chumin</h2>
+<button onclick="restartBook()">Cerrar invitación</button>
+</div>
+</div>
+
+</div>
+
+<script>
+let pages = document.querySelectorAll(".page");
+let current = 0;
+
+function nextPage(){
+    if(current < pages.length-1){
+        pages[current].classList.add("flipped");
+        current++;
+        pages[current].style.zIndex = 20;
+    }
+}
+
+function restartBook(){
+    pages.forEach((page, index)=>{
+        page.classList.remove("flipped");
+        page.style.zIndex = pages.length - index;
+    });
+    current = 0;
+}
+</script>
+
+</body>
+</html>
